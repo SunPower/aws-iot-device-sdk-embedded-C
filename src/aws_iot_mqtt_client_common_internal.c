@@ -309,6 +309,8 @@ IoT_Error_t aws_iot_mqtt_internal_send_packet(AWS_IoT_Client *pClient, size_t le
 	}
 #endif
 
+	(pClient->clientStatus.bytesSent) += sent;
+
 	if(sent == length) {
 		/* record the fact that we have successfully sent the packet */
 		//countdown_sec(&c->pingTimer, c->clientData.keepAliveInterval);
@@ -422,6 +424,8 @@ static IoT_Error_t _aws_iot_mqtt_internal_read_packet(AWS_IoT_Client *pClient, T
 			}
 		} while(total_bytes_read < rem_len && SUCCESS == rc);
 
+	(pClient->clientStatus.bytesRecieved) += total_bytes_read;
+
         /* Check buffer was correctly emptied, otherwise, return error message. */
         if ( total_bytes_read == rem_len )
         {
@@ -436,6 +440,7 @@ static IoT_Error_t _aws_iot_mqtt_internal_read_packet(AWS_IoT_Client *pClient, T
 
 	/* 3. read the rest of the buffer using a callback to supply the rest of the data */
 	if(rem_len > 0) {
+	(pClient->clientStatus.bytesRecieved) += read_len;
         rc = _aws_iot_mqtt_internal_readWrapper( pClient, offset, rem_len, pTimer, &read_len );
 		if(SUCCESS != rc || read_len != rem_len) {
 			return FAILURE;

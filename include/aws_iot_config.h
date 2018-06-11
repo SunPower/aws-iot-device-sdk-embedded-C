@@ -1,0 +1,1 @@
+../snpwr-aws-iot-libraries/include/aws_iot_config.h
